@@ -30,7 +30,7 @@ class App:
 			self.ennatys.destroy()
 		except:
 			pass
-		self.kartta = [[0 for x in range(10)] for y in range(24)]
+		self.kartta = [[0 for x in range(10)] for y in range(25)]
 		self.pudonneet = []
 		self.pisteet = 0
 		self.pistenaytto = Label(self.huippu, font = ("arial", 20), text=str(self.pisteet))
@@ -46,9 +46,12 @@ class App:
 		except:
 			self.muoto = random.choice(["I", "J", "L", "S", "Z", "T", "O"])
 		self.tetro = []
+		self.keskus = [80, -40]
 		if self.muoto == "I":
 			for i in range(4):
 				self.tetro.append(self.kentta.create_rectangle(80, -80+20*i, 100, -60+20*i, fill="brown"))
+			self.keskus = [80, -60]
+			self.asento = 0
 		if self.muoto == "J":
 			for i in range(3):
 				self.tetro.append(self.kentta.create_rectangle(80, -60+20*i, 100, -40+20*i, fill="blue"))
@@ -58,10 +61,9 @@ class App:
 				self.tetro.append(self.kentta.create_rectangle(80, -60+20*i, 100, -40+20*i, fill="orange"))
 			self.tetro.append(self.kentta.create_rectangle(100, -20, 120, 0, fill="orange"))
 		if self.muoto == "T":
-			self.tetro.append(self.kentta.create_rectangle(80, -40, 100, -20, fill="violet"))
-			self.tetro.append(self.kentta.create_rectangle(80, -20, 100, 0, fill="violet"))
-			self.tetro.append(self.kentta.create_rectangle(60, -20, 80, 0, fill="violet"))
-			self.tetro.append(self.kentta.create_rectangle(100, -20, 120, 0, fill="violet"))
+			for i in range(3):
+				self.tetro.append(self.kentta.create_rectangle(80, -60+20*i, 100, -40+20*i, fill="violet"))
+			self.tetro.append(self.kentta.create_rectangle(100, -40, 120, -20, fill="violet"))
 		if self.muoto == "S":
 			for i in range(2):
 				self.tetro.append(self.kentta.create_rectangle(80, -60+20*i, 100, -40+20*i, fill="green"))
@@ -76,7 +78,6 @@ class App:
 			for i in range(2):
 				for j in range(2):
 					self.tetro.append(self.kentta.create_rectangle(80+20*i, -40+20*j, 100+20*i, -20+20*j, fill="yellow"))
-		self.asento = 0
 		self.smuoto = random.choice(["I", "J", "L", "S", "Z", "T", "O"])
 		self.snaytto.delete("all")
 		if self.smuoto == "I":
@@ -116,100 +117,61 @@ class App:
 	def kaanna1(self, event):
 		if self.muoto == "O":
 			return
-		elif self.kentta.coords(self.tetro[1])[0] == 0 or self.kentta.coords(self.tetro[1])[0] == 180:
+		elif self.keskus[0] == 0 or self.keskus[0] == 180:
 			return
 		elif self.muoto == "I":
 			if self.asento == 0:
-				if self.kentta.coords(self.tetro[1])[0] > 20:
+				if self.keskus[0] > 20:
 					if all(self.kartta[j][i] == 0 for j in range(int(self.kentta.coords(self.tetro[1])[1]/20)-1, int(self.kentta.coords(self.tetro[1])[1]/20)+3) for i in range(int(self.kentta.coords(self.tetro[1])[0]/20)-2, int(self.kentta.coords(self.tetro[1])[0]/20)+2)):
-						self.kaanna3(-2, -2, 2, -2, 2, 2, -2, 2)
+						self.kaanna2()
+						self.asento = 1
 			elif self.asento == 1:
 				if all(self.kartta[j][i] == 0 for j in range(int(self.kentta.coords(self.tetro[1])[1]/20)-2, int(self.kentta.coords(self.tetro[1])[1]/20)+2) for i in range(int(self.kentta.coords(self.tetro[1])[0]/20)-2, int(self.kentta.coords(self.tetro[1])[0]/20)+2)):
-					self.kaanna3(-2, -2, 2, -2, 2, 2, -2, 2)
+					self.kaanna2()
+					self.asento = 2
 			elif self.asento == 2:
-				if self.kentta.coords(self.tetro[1])[0] < 160:
+				if self.keskus[0] < 160:
 					if all(self.kartta[j][i] == 0 for j in range(int(self.kentta.coords(self.tetro[1])[1]/20)-2, int(self.kentta.coords(self.tetro[1])[1]/20)+2) for i in range(int(self.kentta.coords(self.tetro[1])[0]/20)-1, int(self.kentta.coords(self.tetro[1])[0]/20)+3)):
-						self.kaanna3(-2, -2, 2, -2, 2, 2, -2, 2)
+						self.kaanna2()
+						self.asento = 3
 			elif self.asento == 3:
 				if all(self.kartta[j][i] == 0 for j in range(int(self.kentta.coords(self.tetro[1])[1]/20)-1, int(self.kentta.coords(self.tetro[1])[1]/20)+3) for i in range(int(self.kentta.coords(self.tetro[1])[0]/20)-1, int(self.kentta.coords(self.tetro[1])[0]/20)+3)):
-					self.kaanna3(-2, -2, 2, -2, 2, 2, -2, 2)
+					self.kaanna2()
+					self.asento = 0
 						
 		else:
 			if all(self.kartta[j][i] == 0 for j in range(int(self.kentta.coords(self.tetro[1])[1]/20)-1, int(self.kentta.coords(self.tetro[1])[1]/20)+2) for i in range(int(self.kentta.coords(self.tetro[1])[0]/20)-1, int(self.kentta.coords(self.tetro[1])[0]/20)+2)):
-				if self.muoto == "L":
-					self.kaanna3(-2, 0, 0, -2, 2, 0, 0, 2)
-				if self.muoto == "J":
-					self.kaanna3(0, -2, 2, 0, 0, 2, -2, 0)
-				if self.muoto == "T":
-					self.kaanna2(1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, -1, 1, -1, 1, 1)
-				if self.muoto == "S":
-					self.kaanna2(-1, 1, -1, -1, 1, -1, 1, 1, -2, 0, 0, -2, 2, 0, 0, 2)
-				if self.muoto == "Z":
-					self.kaanna2(1, -1, 1, 1, -1, 1, -1, -1, 0, -2, 2, 0, 0, 2, -2, 0)
+				self.kaanna2()
 
-	def kaanna2(self, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p):
-		if self.asento == 0:
-			self.kentta.move(self.tetro[0], 20, 20)
-			self.kentta.move(self.tetro[2], a*20, b*20)
-			self.kentta.move(self.tetro[3], i*20, j*20)
-			self.asento = 1
-		elif self.asento == 1:
-			self.kentta.move(self.tetro[0], -20, 20)
-			self.kentta.move(self.tetro[2], c*20, d*20)
-			self.kentta.move(self.tetro[3], k*20, l*20)
-			self.asento = 2
-		elif self.asento == 2:
-			self.kentta.move(self.tetro[0], -20, -20)
-			self.kentta.move(self.tetro[2], e*20, f*20)
-			self.kentta.move(self.tetro[3], m*20, n*20)
-			self.asento = 3
-		elif self.asento == 3:
-			self.kentta.move(self.tetro[0], 20, -20)
-			self.kentta.move(self.tetro[2], g*20, h*20)
-			self.kentta.move(self.tetro[3], o*20, p*20)
-			self.asento = 0
-
-	def kaanna3(self, a, b, c, d, e, f, g, h):
-		self.kaanna2(-1, -1, 1, -1, 1, 1, -1, 1, a, b, c, d, e, f, g, h)
+	def kaanna2(self):
+		for palikka in self.tetro:
+			x_koord = self.kentta.coords(palikka)[0] - self.keskus[0]
+			y_koord = self.kentta.coords(palikka)[1] - self.keskus[1]
+			self.kentta.coords(palikka, self.keskus[0] - y_koord, self.keskus[1] + x_koord, self.keskus[0] - y_koord + 20, self.keskus[1] + x_koord + 20)
 
 	def pudota(self):
 		# jos ei pohjassa
 		if all(self.kentta.coords(pala)[1] < 380 for pala in self.tetro) and all(self.kartta[int(self.kentta.coords(pala)[1]/20)+1][int(self.kentta.coords(pala)[0]/20)] == 0 for pala in self.tetro):
 			for pala in self.tetro:
 				self.kentta.move(pala, 0, 20)
+			self.keskus[1] += 20
 			global putous
 			putous = root.after(250, self.pudota)
 		else:
 			# osuu pohjaan
 			root.after_cancel(putous)
+			self.pudonneet.extend(self.tetro)
 			for pala in self.tetro:
-				self.pudonneet.append(pala)
 				self.kartta[int(self.kentta.coords(pala)[1]/20)][int(self.kentta.coords(pala)[0]/20)] = 1
 			self.luotetro()
+			self.tyhjennettavat = 0
 			for rivi in range(20):
 				if min(self.kartta[rivi]) == 1:
-					if min(self.kartta[rivi+1]) == 1:
-						if min(self.kartta[rivi+2]) == 1:
-							if min(self.kartta[rivi+3]) == 1:
-								self.tyhjenna(rivi, 4)
-								self.pisteet += 27
-								self.pistenaytto["text"] = str(self.pisteet)
-								break
-							else:
-								self.tyhjenna(rivi, 3)
-								self.pisteet += 9
-								self.pistenaytto["text"] = str(self.pisteet)
-								break
-						else:
-							self.tyhjenna(rivi, 2)
-							self.pisteet += 3
-							self.pistenaytto["text"] = str(self.pisteet)
-							break
-					else:
-						self.tyhjenna(rivi, 1)
-						self.pisteet += 1
-						self.pistenaytto["text"] = str(self.pisteet)
-						break
+					self.tyhjenna(rivi)
+					self.tyhjennettavat += 1
+			if self.tyhjennettavat > 0:
+				self.pisteet += 3**(self.tyhjennettavat-1)
+				self.pistenaytto["text"] = str(self.pisteet)
 	def vasen(self, event):
 		# ei saa olla reunassa
 		if all(0 < self.kentta.coords(pala)[0] for pala in self.tetro):
@@ -217,6 +179,7 @@ class App:
 			if all(self.kartta[int(self.kentta.coords(pala)[1]/20)][int(self.kentta.coords(pala)[0]/20) - 1] == 0 for pala in self.tetro):
 				for pala in self.tetro:
 					self.kentta.move(pala, -20, 0)
+				self.keskus[0] -= 20
 	def oikea(self, event):
 		# ei reunassa
 		if all(self.kentta.coords(pala)[0] < 180 for pala in self.tetro):
@@ -224,6 +187,7 @@ class App:
 			if all(self.kartta[int(self.kentta.coords(pala)[1]/20)][int(self.kentta.coords(pala)[0]/20) + 1] == 0 for pala in self.tetro):
 				for pala in self.tetro:
 					self.kentta.move(pala, 20, 0)
+				self.keskus[0] += 20
 	def alas(self, event):
 		# ei pohjalla
 		if all(self.kentta.coords(pala)[1] < 380 for pala in self.tetro):
@@ -231,17 +195,17 @@ class App:
 			if all(self.kartta[int(self.kentta.coords(pala)[1]/20)+1][int(self.kentta.coords(pala)[0]/20)] == 0 for pala in self.tetro):
 				for pala in self.tetro:
 					self.kentta.move(pala, 0, 20)
-	def tyhjenna(self, eka, rivit):
+				self.keskus[1] += 20
+	def tyhjenna(self, eka):
 		for pala in reversed(self.pudonneet):
-			if self.kentta.coords(pala)[1] in range(eka*20, (eka+(rivit-1))*20+20, 20):
+			if self.kentta.coords(pala)[1] == eka*20:
 				self.pudonneet.remove(pala)
 				self.kentta.delete(pala)
 			elif self.kentta.coords(pala)[1] < eka*20:
-				self.kentta.move(pala, 0, 20*rivit)
-		for j in reversed(range(rivit, eka+rivit)):
-			self.kartta[j] = self.kartta[j-rivit]
-		for k in range(rivit):
-			self.kartta[k] = [0 for x in range(10)]
+				self.kentta.move(pala, 0, 20)
+		for j in reversed(range(1, eka+1)):
+			self.kartta[j] = self.kartta[j-1]
+		self.kartta[0] = [0 for x in range(10)]
 	def loppu(self):
 		self.kentta.destroy()
 		self.snaytto.destroy()
@@ -256,6 +220,7 @@ class App:
 		self.huiput.place(relx=0.5, rely=0.6, anchor=CENTER)
 		self.lopeta = Button(root, text="Lopeta", command=root.quit)
 		self.lopeta.place(relx=0.5, rely=0.8, anchor=CENTER)
+		# check if the result is a new record
 		tulokset = open("/home/ilari-perus/omatohjelmat/tetris-tulokset.txt", "r")
 		tuloshistoria = tulokset.readlines()
 		tulokset.close()
